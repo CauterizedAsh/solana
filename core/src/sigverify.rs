@@ -94,7 +94,7 @@ impl SigVerifier for TransactionSigVerifier {
         is_dup: bool,
     ) {
         sigverify::check_for_tracer_packet(packet);
-        if packet.meta().is_tracer_packet() {
+        if packet.meta.is_tracer_packet() {
             if removed_before_sigverify_stage {
                 self.tracer_packet_stats
                     .total_removed_before_sigverify_stage += 1;
@@ -110,14 +110,14 @@ impl SigVerifier for TransactionSigVerifier {
 
     #[inline(always)]
     fn process_excess_packet(&mut self, packet: &Packet) {
-        if packet.meta().is_tracer_packet() {
+        if packet.meta.is_tracer_packet() {
             self.tracer_packet_stats.total_excess_tracer_packets += 1;
         }
     }
 
     #[inline(always)]
     fn process_passed_sigverify_packet(&mut self, packet: &Packet) {
-        if packet.meta().is_tracer_packet() {
+        if packet.meta.is_tracer_packet() {
             self.tracer_packet_stats
                 .total_tracker_packets_passed_sigverify += 1;
         }
@@ -136,14 +136,10 @@ impl SigVerifier for TransactionSigVerifier {
     fn verify_batches(
         &self,
         mut batches: Vec<PacketBatch>,
-        valid_packets: usize,
+        _valid_packets: usize,
     ) -> Vec<PacketBatch> {
-        sigverify::ed25519_verify(
+        sigverify::ed25519_verify_disabled(
             &mut batches,
-            &self.recycler,
-            &self.recycler_out,
-            self.reject_non_vote,
-            valid_packets,
         );
         batches
     }
